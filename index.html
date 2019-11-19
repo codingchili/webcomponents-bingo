@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<title>Ida Infront &copy; - Autumn Bingo 2019</title>
+<style>
+    html {
+        font-family: "Open Sans", sans-serif;
+        font-size: 14px;
+    }
+
+    h2, h5 {
+        text-align: center;
+        color: #3eb1c8;
+    }
+
+    @page {
+        size: auto;
+        margin: 2mm;
+    }
+
+    bingo-grid {
+        display: flex;
+        flex-flow: row wrap;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px;
+        margin: auto;
+    }
+
+    bingo-tile {
+        display: flex;
+        width: 164px;
+        height: 96px;
+        margin: 16px;
+        cursor: pointer;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px;
+    }
+
+    .bingo-text {
+        margin: auto;
+        text-align: center;
+        break-word: all;
+        user-select: none;
+        padding: 8px;
+    }
+
+    .checked {
+        background-color: #3eb1c8;
+        color: #ffffff;
+    }
+
+    * {
+        -webkit-print-color-adjust: exact !important;
+        color-adjust: exact !important;
+    }
+
+    /* try to look readable and conserve some ink! */
+    @media print {
+        .checked {
+            color: #000;
+            background-color: #fff;
+            border: 2px solid #000;
+        }
+
+        bingo-tile {
+            border: none;
+            box-shadow: none;
+        }
+
+        bingo-grid {
+            border: none;
+            box-shadow: none;
+        }
+    }
+
+    player-name {
+        margin: auto;
+        display: block;
+        margin-top: 32px;
+        text-align: center;
+        cursor: pointer;
+    }
+</style>
+<script>
+    let tiles = [
+        "Try a new form of physical activity - maybe tell a colleague about your experience!",
+        "Try a meditation and/or relaxation exercise",
+        "Take a lunch walk with a colleague from another team",
+        "Inspire a colleague to tick one of these bingo boxes",
+        "Get at least 8 hours of sleep one night",
+        "Read/listen to a book",
+        "Try a new fruit or vegetable",
+        "Refrain from candy/cookies/snacks etc for three days in a row.",
+        "Take the stairs instead of the elevator for the whole period",
+        "Eat breakfast every day for a week",
+        "Bring a home made lunchbox during one work week",
+        "Get active so you get sweaty for at least 60 minutes",
+        "Turn off social medias for 24 hours.",
+        "Take a lunch walk at least one time/work week during the whole period",
+        "Give positive feedback to a colleague",
+        "Work standing up at least 1hr/day during a work week",
+        "Play a board game",
+        "Work out at least 30 min/2 times a week during the whole period",
+        "Have a nice dinner with family and friends",
+        "Work out (at home or at the gym) three times during the period",
+        "Turn off all screens (phone, tv, ipads etc) one hour before going to bed",
+        "Cook a new dish",
+        "Go to the cinema or see a good movie at home",
+        "Try out iiGym (non-Linköpingers; another physical exercise of your choice)",
+        "Cook something from scratch that you usually don't"
+    ];
+
+    class BingoGrid extends HTMLElement {
+        connectedCallback() {
+            this.style['flex-basis'] = `${100 / this.getAttribute('grid-columns')}%`;
+            this.style['width'] = `${this.getAttribute('grid-columns') * 198}px`;
+
+            for (let text of tiles) {
+                let tile = document.createElement('bingo-tile');
+                tile.setAttribute('text', text);
+                this.appendChild(tile);
+            }
+        }
+    }
+    customElements.define('bingo-grid', BingoGrid);
+
+    class BingoTile extends HTMLElement {
+        connectedCallback() {
+            this.checked = localStorage.getItem(this.getAttribute('text')) === "true";
+            this.update();
+
+            this.innerHTML = `<span class="bingo-text">${this.getAttribute('text')}</span>`;
+
+            this.addEventListener('mousedown', (e) => {
+                this.checked = !this.checked;
+                this.update();
+            });
+        }
+
+        update() {
+            if (this.checked) {
+                localStorage.setItem(this.getAttribute('text'), true);
+                this.classList.add('checked');
+            } else {
+                localStorage.setItem(this.getAttribute('text'), false);
+                this.classList.remove('checked');
+            }
+        }
+    }
+    customElements.define('bingo-tile', BingoTile);
+
+    class PlayerName extends HTMLElement {
+        connectedCallback() {
+            this.name = localStorage.getItem("username") || "unknown";
+            this.editable = false;
+            this.display();
+            this.addEventListener('mousedown', (e) => {
+                this.editable = !this.editable;
+                if (this.editable) {
+                    this.edit();
+                }
+            });
+        }
+
+        render(html) {
+            this.innerHTML = html;
+        }
+
+        edit() {
+            this.editable = true;
+            this.render(`
+                <input id="input" type="text" placeholder="${this.name}" autofocus></input>
+            `);
+            setTimeout((e) => {
+                let input = document.getElementById("input");
+                input.focus();
+                input.addEventListener('blur', this.save.bind(this));
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        this.save(e);
+                    }
+                });
+            }, 0);
+        }
+
+        save(e) {
+            let input = document.getElementById("input");
+            if (input.value.length > 0) {
+                this.name = input.value;
+                localStorage.setItem('username', this.name);
+            }
+            this.display();
+        }
+
+        display() {
+            this.editable = false;
+            this.render(`<span>Player name ${this.name}.</span>`);
+        }
+    }
+     customElements.define('player-name', PlayerName);
+</script>
+<body>
+    <h2>Ida Infront - Autumn Bingo 2019</h2>
+    <h5>Period: 1 - 30 November</h5>
+    <bingo-grid id="grid" grid-columns="5"><!-- dynamically generated tiles --></bingo-grid>
+    <player-name></player-name>
+</body>
+</html>

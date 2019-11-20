@@ -29,3 +29,6 @@ python3 -m http.server
 ```
 
 The server will then be started on localhost:2019. If the server name changes or the index.html file is moved (when run from disk) then any user data will be lost. Additionally if a domain changes ownership, any data that is locked up in local storage will be available to anything running on the domain by the new owner.
+
+# TBD
+update Dockerfile to work with file structure refactor.

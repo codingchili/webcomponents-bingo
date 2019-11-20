@@ -1,8 +1,16 @@
-# idainfront-bingo
+# webcomponents-bingo
 
-The idainfront bingo is a SPA which only uses web standards such as web components and local storage. It's 2019 and there's no need for frameworks, wow.
+The bingo app is a SPA which only uses web standards such as web components and local storage. It's 2019 and there's no need for frameworks, wow.
 
 ![screenshot](screenshot.png)
+
+##### How to play
+
+1. deploy the bingo app
+2. notify employees
+3. wait for bingo to commence.
+4. end of period, collect results.
+    4a) either online submission or printed cards.
 
 # Deploy
 

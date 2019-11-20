@@ -1,6 +1,8 @@
 # idainfront-bingo
 
-The idainfront bingo is a SPA which only uses web standards such as web components and local storage.
+The idainfront bingo is a SPA which only uses web standards such as web components and local storage. It's 2019 and there's no need for frameworks, wow.
+
+![screenshot](screenshot.png)
 
 # Deploy
 

@@ -1,205 +1,27 @@
 <!DOCTYPE html>
 <html>
 <title>Ida Infront &copy; - Autumn Bingo 2019</title>
-<style>
-    html {
-        font-family: "Open Sans", sans-serif;
-        font-size: 14px;
-    }
-
-    h2, h5 {
-        text-align: center;
-        color: #3eb1c8;
-    }
-
-    @page {
-        size: auto;
-        margin: 2mm;
-    }
-
-    bingo-grid {
-        display: flex;
-        flex-flow: row wrap;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px;
-        margin: auto;
-    }
-
-    bingo-tile {
-        display: flex;
-        width: 164px;
-        height: 96px;
-        margin: 16px;
-        cursor: pointer;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px;
-    }
-
-    .bingo-text {
-        margin: auto;
-        text-align: center;
-        break-word: all;
-        user-select: none;
-        padding: 8px;
-    }
-
-    .checked {
-        background-color: #3eb1c8;
-        color: #ffffff;
-    }
-
-    * {
-        -webkit-print-color-adjust: exact !important;
-        color-adjust: exact !important;
-    }
-
-    /* try to look readable and conserve some ink! */
-    @media print {
-        .checked {
-            color: #000;
-            background-color: #fff;
-            border: 2px solid #000;
-        }
-
-        bingo-tile {
-            border: none;
-            box-shadow: none;
-        }
-
-        bingo-grid {
-            border: none;
-            box-shadow: none;
-        }
-    }
-
-    player-name {
-        margin: auto;
-        display: block;
-        margin-top: 32px;
-        text-align: center;
-        cursor: pointer;
-    }
-</style>
-<script>
-    let tiles = [
-        "Try a new form of mind control on unsuspecting victims.",
-        "Excersise your right to free speech.",
-        "Call out intolerance with a fierce shriek.",
-        "Inspire allies with your mighty resolve.",
-        "Perform one good deed, one bad deed and one questionable deed.",
-        "Preach satanism to a neighbor in need.",
-        "Express an unpopular opinion.",
-        "Celebrate life in any way you please.",
-        "Break the shackles of monophasic sleep.",
-        "Try out a new form of creative expression.",
-        "Express gratitude towards your minions.",
-        "Pet a cat in need.",
-        "Donate to animal sanctuaries.",
-        "Take a deep, hard look at yourself.",
-        "Give alternative facts to someone who questions you.",
-        "Enjoy the comfort there is in truth.",
-        "Question reality for a whole day.",
-        "Break a gender norm.",
-        "Eat a plant based dinner",
-        "Take extra precautions to make your funds safu.",
-        "Shut down your facebook account.",
-        "Cut your carbon emissions in half.",
-        "Spit in the face of God.",
-        "Break a personal record in any way.",
-        "Adopt a vegan lifestyle."
-    ];
-
-    class BingoGrid extends HTMLElement {
-        connectedCallback() {
-            this.style['flex-basis'] = `${100 / this.getAttribute('grid-columns')}%`;
-            this.style['width'] = `${this.getAttribute('grid-columns') * 198}px`;
-
-            for (let text of tiles) {
-                let tile = document.createElement('bingo-tile');
-                tile.setAttribute('text', text);
-                this.appendChild(tile);
-            }
-        }
-    }
-    customElements.define('bingo-grid', BingoGrid);
-
-    class BingoTile extends HTMLElement {
-        connectedCallback() {
-            this.checked = localStorage.getItem(this.getAttribute('text')) === "true";
-            this.update();
-
-            this.innerHTML = `<span class="bingo-text">${this.getAttribute('text')}</span>`;
-
-            this.addEventListener('mousedown', (e) => {
-                this.checked = !this.checked;
-                this.update();
-            });
-        }
-
-        update() {
-            if (this.checked) {
-                localStorage.setItem(this.getAttribute('text'), true);
-                this.classList.add('checked');
-            } else {
-                localStorage.setItem(this.getAttribute('text'), false);
-                this.classList.remove('checked');
-            }
-        }
-    }
-    customElements.define('bingo-tile', BingoTile);
-
-    class PlayerName extends HTMLElement {
-        connectedCallback() {
-            this.name = localStorage.getItem("username") || "unknown";
-            this.editable = false;
-            this.display();
-            this.addEventListener('mousedown', (e) => {
-                this.editable = !this.editable;
-                if (this.editable) {
-                    this.edit();
-                }
-            });
-        }
-
-        render(html) {
-            this.innerHTML = html;
-        }
-
-        edit() {
-            this.editable = true;
-            this.render(`
-                <input id="input" type="text" placeholder="${this.name}" autofocus></input>
-            `);
-            setTimeout((e) => {
-                let input = document.getElementById("input");
-                input.focus();
-                input.addEventListener('blur', this.save.bind(this));
-                input.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter') {
-                        this.save(e);
-                    }
-                });
-            }, 0);
-        }
-
-        save(e) {
-            let input = document.getElementById("input");
-            if (input.value.length > 0) {
-                this.name = input.value;
-                localStorage.setItem('username', this.name);
-            }
-            this.display();
-        }
-
-        display() {
-            this.editable = false;
-            this.render(`<span>Player name ${this.name}.</span>`);
-        }
-    }
-     customElements.define('player-name', PlayerName);
-</script>
+<link rel="stylesheet" href="style/style.css">
+<script type="module" src="components/bingo-tile.js"></script>
+<script type="module" src="components/bingo-grid.js"></script>
+<script type="module" src="components/player-name.js"></script>
 <body>
     <h2>Company Name - Spring Bingo 2020</h2>
     <h5>Period: 1 - 30 April</h5>
     <bingo-grid id="grid" grid-columns="5"><!-- dynamically generated tiles --></bingo-grid>
     <player-name></player-name>
+
+    <script>
+    function configure() {
+        fetch('./data/bingo.json').then(response => {
+            response.json().then(json => {
+                let grid = document.getElementById('grid');
+                console.log(grid);
+                grid.update(json.tiles);
+            });
+        });
+    }
+    configure();
+</script>
 </body>
 </html>

@@ -5,4 +5,6 @@ async def index(request):
 
 app = web.Application()
 app.add_routes([web.get('/', index)])
+app.router.add_static('/', '.')
 web.run_app(app)
+

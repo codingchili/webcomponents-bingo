@@ -1,0 +1,21 @@
+* {
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+}
+
+.checked {
+    color: #000 !important;
+    background-color: #fff !important;
+    border: 2px solid #000 !important;
+}
+
+bingo-tile {
+    border: none !important;
+    margin: 4px !important;
+    box-shadow: none !important;
+}
+
+bingo-grid {
+    border: none !important;
+    box-shadow: none !important;
+}

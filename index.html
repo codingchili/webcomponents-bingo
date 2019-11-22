@@ -1,23 +1,27 @@
 <!DOCTYPE html>
 <html>
-<title>Ida Infront &copy; - Autumn Bingo 2019</title>
+<title>Organization &copy; - Autumn Bingo 2019</title>
+
 <link rel="stylesheet" href="style/style.css">
+<link rel="stylesheet" href="style/print.css" media="print">
+
+<!-- import custom elements as script modules -->
 <script type="module" src="components/bingo-tile.js"></script>
 <script type="module" src="components/bingo-grid.js"></script>
 <script type="module" src="components/player-name.js"></script>
 <body>
     <h2>Company Name - Spring Bingo 2020</h2>
     <h5>Period: 1 - 30 April</h5>
-    <bingo-grid id="grid" grid-columns="5"><!-- dynamically generated tiles --></bingo-grid>
+    <bingo-grid id="grid"><!-- dynamically generated tiles --></bingo-grid>
     <player-name></player-name>
 
+    <!-- configure the bingo grid after the dom has loaded. -->
     <script>
     function configure() {
         fetch('./data/bingo.json').then(response => {
             response.json().then(json => {
                 let grid = document.getElementById('grid');
-                console.log(grid);
-                grid.update(json.tiles);
+                grid.update(json);
             });
         });
     }

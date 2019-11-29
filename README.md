@@ -19,7 +19,7 @@ The application can be run locally in the browser without the need of any server
 There is a Dockerfile that can be built, which includes aiohttp.
 
 ```console
-docker build -t ida-bingo .
+docker build -t web-bingo .
 docker run -d -p 2019:8080 ida-bingo
 ```
 
